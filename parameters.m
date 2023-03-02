@@ -1,12 +1,13 @@
 %% parameters
+% realated to dimentions and mass of BV
 
 % outer lid
 param.r_outerLid = 0.073; % [m]
-param.h_outerLid = 0.300; % [m]
+param.h_outerLid = 0.295; % [m]
 
 % vehicle house
 param.r_house = 0.065; %[m]
-param.y = 0.08;%0.080;%% Initial guess, adjustable legth between wehicle house bottom, and outer lid. range = [0.010, 0.135]m (fresh water 0.090 is found to be a god value)
+param.y = 0.095;%0.080;%% Initial guess, adjustable legth between wehicle house bottom, and outer lid. range = [0.010, 0.135]m (fresh water 0.090 is found to be a god value)
 param.Areal_vehicle_bottom = pi*param.r_house^2;
 param.Areal_vehicle_top = pi*param.r_outerLid^2;
 % piston

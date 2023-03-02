@@ -5,7 +5,7 @@ clear all; close all; clc;
 
 %%%%%%%%%%%
 searchPresetVolume = false; % search for preset volume, false use param.y 
-useCTDprofile = true;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ; % boolean variable, (true/false) idicate wheter ctd profile is available.  
+useCTDprofile = false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ; % boolean variable, (true/false) idicate wheter ctd profile is available.  
 %%%%%%%%%%
 CTD = load("CTD_probe.mat"); % load CTD probe measurement
 depth_CTD = CTD.Depth;
@@ -77,7 +77,7 @@ v_piston_max = 2.44e-3; %%  1e-3; % max linear speed of piston [m/s]
 %% PID constants
 alpha = 0.2; % Tuning parameter for EMA filter [0,1]
 sampleTime = 0.5;
-sysd = tf([alpha, 0], [1, -(1-alpha)], sampleTime);
+sysd = tf([alpha, 0], [1, -(1-alpha)], sampleTime); %Discrete transfer function (EMA filter) 
 sysc = d2c(sysd); % Transfer function for Pressure sensor (EMA filter)
 %bode(sysc) % Plot bode diagram of EMA filter
 integralTreshold = 1; %threshold in meter when integral is activated.
@@ -95,14 +95,14 @@ offsetSensor = 0;
 %%%%%
 
 %%% optimal tuning for fresh water with filter 
-% Kp = 0.023;
-% Ki = 0.0012;
-% Kd = 0.08;
+Kp = 0.023;
+Ki = 0.0012;
+Kd = 0.08;
 
 %otimal tuning for saltwater with filter
-Kp = 0.023;
-Ki = 0.0015;
-Kd = 0.08;
+% Kp = 0.023;
+% Ki = 0.0015;
+% Kd = 0.08;
 
 %% plot density profile and vehicle density range.
 figure(1)
@@ -124,11 +124,11 @@ legend("water density profile", "min density vehicle", "max density cehicle");
 
 
 %% run simulation
-step_depth1 = 1.5;
-step_depth2 = 1;
-stepTime = 180;
+step_depth1 = 1.25;
+step_depth2 = 1.25;
+stepTime = 0;
 %Simulation 
-tspan = [0 180*2]; % Time span for simulation
+tspan = [0 180]; % Time span for simulation
 %options = simset('MaxStep', 0.5,'MinStep',1e-11, 'AbsTol', 1e-11, 'RelTol', 1e-11);
 %set_param('buoyancy2','AlgebraicLoopSolver','LineSearch');
 out = sim('buoyancy_simulation.slx',tspan);%,options);
@@ -164,8 +164,8 @@ hold off;
 
 subplot(2,1,2);
 hold on;
-plot(timePiston, pisPos);
-plot(timePiston, PIDout);
+plot(timePiston, pisPos*1000);
+plot(timePiston, PIDout*1000);
 xlabel('Time [s]');
 xlim([0 max(timeStep)]);
 ylabel('Position [mm]');
@@ -173,5 +173,8 @@ title('Piston position');
 legend("Piston position","PID output");
 grid();
 hold off;
+
+%% save simulation results for comparing with measured response
+save('../BuoyancyVehiclePlotTestData/simOut.mat','out')
 
 
