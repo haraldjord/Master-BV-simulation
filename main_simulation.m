@@ -81,7 +81,7 @@ sysd = tf([alpha, 0], [1, -(1-alpha)], sampleTime); %Discrete transfer function 
 sysc = d2c(sysd); % Transfer function for Pressure sensor (EMA filter)
 %bode(sysc) % Plot bode diagram of EMA filter
 integralTreshold = 1; %threshold in meter when integral is activated.
-offsetSensor = 0.4;
+offsetSensor = 0;
 
 % tryout
 % Kp = 0.023;
@@ -95,18 +95,19 @@ offsetSensor = 0.4;
 %%%%%
 
 %%% optimal tuning for fresh water with filter 
-% Kp = 0.023;
-% Ki = 0.0012;
-% Kd = 0.08;
+Kp = 0.023;
+Ki = 0.0012;
+Kd = 0.08;
 
 %otimal tuning for saltwater with filter
 % Kp = 0.023;
 % Ki = 0.0015;
 % Kd = 0.08;
 
-Kp = 0.023;
-Ki = 0.005;
-Kd = 0.03;
+% optimal tested response in fall 
+% Kp = 0.023;
+% Ki = 0.005;
+% Kd = 0.03;
 
 %% plot density profile and vehicle density range.
 figure(1)
@@ -128,8 +129,8 @@ legend("water density profile", "min density vehicle", "max density cehicle");
 
 
 %% run simulation
-step_depth1 = 1.5;
-step_depth2 = 1.5;
+step_depth1 = 1.25;
+step_depth2 = 1.25;
 stepTime = 0;
 %Simulation 
 tspan = [0 180]; % Time span for simulation
