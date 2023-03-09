@@ -95,9 +95,9 @@ offsetSensor = 0;
 %%%%%
 
 %%% optimal tuning for fresh water with filter 
-Kp = 0.023;
-Ki = 0.0012;
-Kd = 0.08;
+% Kp = 0.023;
+% Ki = 0.0012;
+% Kd = 0.08;
 
 %otimal tuning for saltwater with filter
 % Kp = 0.023;
@@ -108,6 +108,11 @@ Kd = 0.08;
 % Kp = 0.023;
 % Ki = 0.005;
 % Kd = 0.03;
+
+% Tryout
+Kp = 0.03;
+Ki = 0.002;
+Kd = 0.08;
 
 %% plot density profile and vehicle density range.
 figure(1)
@@ -129,14 +134,14 @@ legend("water density profile", "min density vehicle", "max density cehicle");
 
 
 %% run simulation
-step_depth1 = 1.25;
+step_depth1 = 0;
 step_depth2 = 1.25;
 stepTime = 0;
 %Simulation 
 tspan = [0 180]; % Time span for simulation
 %options = simset('MaxStep', 0.5,'MinStep',1e-11, 'AbsTol', 1e-11, 'RelTol', 1e-11);
 %set_param('buoyancy2','AlgebraicLoopSolver','LineSearch');
-out = sim('buoyancy_simulation.slx',tspan);%,options);
+out = sim('buoyancy_simulation.slx',tspan);     %,options);
 
 %% Plot Simulation result 
 Depth = out.stepResponse.signals.values(:,2);
@@ -182,13 +187,13 @@ hold off;
 
 
 
-figure(99) % PID out vs pid out v2
-hold on 
-plot(timePiston, PIDout);
-plot(timePiston(1:360), out.PIDout_v2.signals.values) 
-hold off
-legend('PIDout', 'PIDout_v2')
-grid()
+% figure(99) % PID out vs pid out v2
+% hold on 
+% plot(timePiston, PIDout);
+% plot(timePiston(1:360), out.PIDout_v2.signals.values) 
+% hold off
+% legend('PIDout', 'PIDout_v2')
+% grid()
 
 %% save simulation results for comparing with measured response
 save('../BuoyancyVehiclePlotTestData/simOut.mat','out')
