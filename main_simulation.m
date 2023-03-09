@@ -155,7 +155,7 @@ timePiston = out.PistonPosition.time;
 
 fig1 = figure(5);
 subplot(2,1,1);
-hold on;
+% hold on;
 %SEGMENT 2
 hold on;
 plot(timeStep, Depth);
