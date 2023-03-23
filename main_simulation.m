@@ -4,7 +4,7 @@ clear all; close all; clc;
 
 
 %%%%%%%%%%%
-searchPresetVolume = false; % search for preset volume, false use param.y 
+searchPresetVolume = false; % search for preset volume, false use param.h_bot 
 useCTDprofile = false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ; % boolean variable, (true/false) idicate wheter ctd profile is available.  
 %%%%%%%%%%
 CTD = load("CTD_probe.mat"); % load CTD probe measurement
@@ -18,20 +18,20 @@ if useCTDprofile
 
     rho_water_interval = max(densityProfile) - min(densityProfile)
 end
-water_density = 997;    % constant water density (useCTDprofile = false)
+water_density = 999;    % constant water density (useCTDprofile = false)
 
 % load dimention parameters in struct param.
 parameters
 
 
-g = 9.82; % [m/s^2]
-C_d = 0.9; % Drag coefficient 
-
+g = 9.81; % [m/s^2]
+Cd_top = 1.28;%0.9 % Drag coefficient when floating to surface
+Cd_bottom  = 1; %Drag coefficient when sinking 
 [V_max, V_piston] = calc_preset_volume(param);
 
 rho_min_vehicle = param.mass/V_max;
 if searchPresetVolume
-    param.y = 0.08; %Initial value of outer lid height from vehicle bottom  
+    param.h_bot = 0.08; %Initial value of outer lid height from vehicle bottom  
 end
 
 while searchPresetVolume
@@ -40,23 +40,23 @@ while searchPresetVolume
        [V_max, V_piston] = calc_preset_volume(param);
        rho_min_vehicle = param.mass/V_max;
         if rho_min_vehicle < min(densityProfile)
-            param.y = param.y +0.001; % Add one mm (for safety limit)
+            param.h_bot = param.h_bot +0.001; % Add one mm (for safety limit)
             searchPresetVolume = false;
             disp("recomended presetting of volume: ");
-            disp(param.y);
+            disp(param.h_bot);
         end
-        param.y = param.y +0.001; % Add one mm
+        param.h_bot = param.h_bot +0.001; % Add one mm
     else
-        param.y = param.y +0.001; % Add one mm
+        param.h_bot = param.h_bot +0.001; % Add one mm
         [V_max, V_piston] = calc_preset_volume(param);
         rho_min_vehicle = param.mass/V_max;
         if rho_min_vehicle < water_density
-            param.y = param.y +0.001; % Add one mm (for safety limit)            
+            param.h_bot = param.h_bot +0.001; % Add one mm (for safety limit)            
             searchPresetVolume = false;
             disp("recomended presetting of volume: ");
-            disp(param.y);
+            disp(param.h_bot);
         end
-        param.y = param.y +0.001; % Add one mm
+        param.h_bot = param.h_bot +0.001; % Add one mm
     end
         
 end
@@ -64,7 +64,7 @@ rho_max_vehicle = param.mass/(V_max-V_piston);
 rho_vehicle_interval = rho_max_vehicle - rho_min_vehicle
 
 
-delta_pos_psiton_min = (1/51200000); % Linear movement per step
+delta_pos_positon_min = (1/51200000); % Linear movement per step
 
 
 %%%% piston parameters
@@ -74,21 +74,32 @@ v_piston_max = 2.44e-3; %%  1e-3; % max linear speed of piston [m/s]
 %     disp("Warnign: densiti of water has greater range then vehicle");
 % end
 
+%% plot density profile and vehicle density range.
+figure(1)
+hold on 
+if useCTDprofile
+    plot(densityProfile, depth_CTD, 'b');
+else
+   plot(water_density*[1,1], [1,50]) 
+end
+plot(rho_min_vehicle*[1,1], [0, 50], 'r');
+plot(rho_max_vehicle*[1,1], [0, 50], 'y');
+hold off
+set(gca,'YDir','Reverse');
+grid();
+title('Density Profile');
+xlabel("Density [kg/m^3]");
+ylabel("Depth[m]");
+legend("water density profile", "min density vehicle", "max density cehicle");
+
 %% PID constants
-alpha = 0.2; % Tuning parameter for EMA filter [0,1]
-sampleTime = 0.5;
-sysd = tf([alpha, 0], [1, -(1-alpha)], sampleTime); %Discrete transfer function (EMA filter) 
-sysc = d2c(sysd); % Transfer function for Pressure sensor (EMA filter)
-%bode(sysc) % Plot bode diagram of EMA filter
-integralTreshold = 1; %threshold in meter when integral is activated.
-offsetSensor = 0;
 
 % tryout
 % Kp = 0.023;
 % Ki = 0.005;
 % Kd = 0.03;
 
-%%%% optimal tuning for fresh water tank param.y = 0.090, without filter
+%%%% optimal tuning for fresh water tank param.h_bot = 0.090, without filter
 % Kp = 0.023;
 % Ki = 0.002;
 % Kd = 0.08;
@@ -110,35 +121,27 @@ offsetSensor = 0;
 % Kd = 0.03;
 
 % Tryout
-Kp = 0.03;
-Ki = 0.002;
-Kd = 0.08;
+% c = 1.3;
+% kc = 0.02 * c;
+Kp = 0.026;
+Ki = 0.001%0.002;
+Kd = 0.1%23*0.27*kc
 
-%% plot density profile and vehicle density range.
-figure(1)
-hold on 
-if useCTDprofile
-    plot(densityProfile, depth_CTD, 'b');
-else
-   plot(water_density*[1,1], [1,50]) 
-end
-plot(rho_min_vehicle*[1,1], [0, 50], 'r');
-plot(rho_max_vehicle*[1,1], [0, 50], 'y');
-hold off
-set(gca,'YDir','Reverse');
-grid();
-title('Density Profile');
-xlabel("Density [kg/m^3]");
-ylabel("Depth[m]");
-legend("water density profile", "min density vehicle", "max density cehicle");
+alpha = 0.4; % Tuning parameter for EMA filter [0,1]
+sampleTime = 0.5;
+% sysd = tf([alpha, 0], [1, -(1-alpha)], sampleTime); %Discrete transfer function (EMA filter) 
+% sysc = d2c(sysd); % Transfer function for Pressure sensor (EMA filter)
+%bode(sysc) % Plot bode diagram of EMA filter
+integralTreshold = 1; %threshold in meter when integral is activated.
+offsetSensor = 0;
 
 
 %% run simulation
-step_depth1 = 0;
-step_depth2 = 1.25;
-stepTime = 0;
+step_depth1 = 1.25;
+step_depth2 = 0.5;
+stepTime = 180;
 %Simulation 
-tspan = [0 180]; % Time span for simulation
+tspan = [0 180*2]; % Time span for simulation
 %options = simset('MaxStep', 0.5,'MinStep',1e-11, 'AbsTol', 1e-11, 'RelTol', 1e-11);
 %set_param('buoyancy2','AlgebraicLoopSolver','LineSearch');
 out = sim('buoyancy_simulation.slx',tspan);     %,options);
