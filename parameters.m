@@ -8,9 +8,12 @@ param.h_outerLid = 0.295; % [m]
 % vehicle house
 param.r_house = 0.065; %[m]
 % param.h_bot = 0.102;
-param.h_bot = 0.0972;    %0.080;%% Initial guess, adjustable legth between wehicle house bottom, and outer lid. range = [0.010, 0.135]m (fresh water 0.090 is found to be a god value)
-% param.h_bot seems to have an deviation of about 1.5mm (sim 96.5 == real
-% 95mm)
+
+% h_bot is adjustable legth between wehicle house bottom, and outer lid. range = [0.010, 0.135]m (fresh water 0.0972 is found to be a god value)
+param.h_bot = 0.0972; % good value for fresh water tank (rho = 999)    
+% param.h_bot seems to have an deviation of about 1.5mm (sim 96.5 == real 95mm)
+param.h_bot = 0.088; %experimental for sea water
+
 
 param.Areal_vehicle_bottom = pi*param.r_house^2;
 param.Areal_vehicle_top = pi*param.r_outerLid^2;
