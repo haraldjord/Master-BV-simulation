@@ -1,6 +1,6 @@
 # Master-BV-simulation
 
-Run script main_simulation.m to execute the simulation
+Run script main_simulation.m to execute the simulation.
 File parameters.m loads the BV volume and mass parameters  
 
 This README file provides an overview of the MATLAB/Simulink simulation code included in this repository. The simulation is designed to model a buoyancy vehicle (BV) system and analyze its behavior under different conditions. The simulation incorporates various parameters and flags to control the behavior of the BV. The simulation results are visualized through plots and saved for further analysis.
