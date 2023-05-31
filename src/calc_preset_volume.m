@@ -1,4 +1,4 @@
-function [V_max, V_piston] = calc_preset_volume(param, h_bot)
+function [V_max, V_piston] = calc_preset_volume(flag, param, h_bot)
 %% Calculate maximum volume of vehicle, when piston at bottom position. In SI Unit [meter] and [kg] 
 V_led = 0.014*(pi*0.0275^2) + 0.013*(pi*0.019^2) + 6*((0.005*pi*0.0035^2 - 0.003*pi*0.002^2));    % volume of LED "house" = V1 + V2 + 6*V_screwHead
 
@@ -17,7 +17,7 @@ V_outerLid = A_outerLid * h_outerLid + 0.005*pi*(0.078^2-0.065^2);% volume outer
 
 
 %Volume of vehicle house, where y is preset value 
-if nargin == 1 % get h_bot from parameter 
+if nargin == 2 % get h_bot from parameter 
     h_bot = param.h_bot; % adjustable length from bottom vehicle to outer lid range = [10, 500]mm
 end
 r_house = param.r_house; % radius of vehicle house
@@ -25,8 +25,21 @@ r_house = param.r_house; % radius of vehicle house
 A_vehicle = pi*(r_house^2);
 V_vehicle = A_vehicle*h_bot;
 
+if (flag.useSafetyRig == true)
+   V_safetyRig = param.safetyRig_volume;
+else
+    V_safetyRig = 0;
+end
+
+if (flag.fishTag == true)
+    V_tagHolder = param.tagHolder_volume;
+else
+    V_tagHolder = 0;
+end
+
+
 %effective volume = V_max = V_vehicle + V_outerLid + V_led - V_pistonBlock
-V_max = V_vehicle + V_outerLid + V_led - V_pistonBlock - V_sensor;
+V_max = V_vehicle + V_outerLid + V_led - V_pistonBlock - V_sensor + V_safetyRig + V_tagHolder;
 
 %% calculate V_piston
 h_pistonMax = param.h_pistonMax;
