@@ -5,10 +5,10 @@ File parameters.m loads the BV volume and mass parameters
 
 This README file provides an overview of the MATLAB/Simulink simulation code included in this repository. The simulation is designed to model a buoyancy vehicle (BV) system and analyze its behavior under different conditions. The simulation incorporates various parameters and flags to control the behavior of the BV. The simulation results are visualized through plots and saved for further analysis.
 
-#Simulation Files
+# Simulation Files
 The main simulation file is buoyancy_simulation.slx, which contains the Simulink model representing the BV system. This file is responsible for running the simulation and generating the output results.
 
-#Constants and Flags
+# Constants and Flags
 The simulation begins by defining various constants and flags that control the behavior of the BV system. These constants and flags are set at the beginning of the script and can be modified to customize the simulation. The following flags are available:
 
 flag.searchPresetVolume: Determines whether to search for a preset volume or use a default value.
@@ -18,10 +18,10 @@ flag.n_safetyRig: Number of safety line holders.
 flag.fishTag: Indicates whether a fish tag holder is mounted.
 The values of these flags are printed to a file named BV-info.txt for reference.
 
-#CTD Profile
+# CTD Profile
 If flag.useCTDprofile is set to true, the simulation loads a CTD probe measurement file (CTD-probe/<name of CTD file>.mat) containing depth and density profile data. The depth and density profiles are then used to calculate the water density profile for the simulation. If no CTD probe measurement file is available, an example file (CTD-probe/example_boorsa.mat) is loaded instead to avoid conflicts in the simulation.
 
-#Calculation of Parameters
+# Calculation of Parameters
 After setting the flags and loading the necessary data, the simulation calculates various parameters required for the BV system. These parameters include:
 
 Calculation of the preset volume (V_max) and piston volume (V_piston) based on the given flags and parameters.
@@ -30,19 +30,19 @@ Calculation of the equilibrium piston position (h_pis_eq) that results in an equ
 Calculation of the presetting h_bot parameter given density profile at target location.
 These calculated parameters are printed to the BV-info.txt file.
 
-#Density Profile and Vehicle Density Range Plot
+# Density Profile and Vehicle Density Range Plot
 A plot of the density profile and the vehicle density range is generated using the calculated parameters. The plot shows the water density profile, the minimum and maximum vehicle densities, and the depth axis in meters. This plot helps visualize the relationship between the water density and the vehicle density.
 
-#PID Constants
+# PID Constants
 The simulation sets the proportional-integral-derivative (PID) constants used for controlling the BV system. The PID constants (Kp, Ki, Kd) are defined at the beginning of the script and can be adjusted for tuning the control algorithm. Additionally, the simulation sets other parameters related to the PID control, such as the tuning parameter for the exponential moving average (EMA) filter, sample time, integral threshold, and sensor offset.
 
-#Simulation Parameters
+# Simulation Parameters
 The simulation parameters include the step depths, step time, and other relevant parameters required for running the simulation. These parameters can be modified at the beginning of the script to customize the simulation behavior.
 
-#Running the Simulation
+# Running the Simulation
 The simulation is executed using the sim function, which runs the buoyancy_simulation.slx model for the specified time span. The simulation results are stored in the out variable.
 
-#Plotting the Simulation Results
+# Plotting the Simulation Results
 The simulation results are visualized through various plots. Two main plots are generated:
 
 Measured Depth: This plot shows the measured depth of the BV system and the target depth. The measured depth is plotted against time, and the target depth is displayed as a reference.
@@ -51,6 +51,6 @@ Additionally, a third plot visualizes the contributions of the PID terms (propor
 
 The generated plots provide insights into the behavior of the BV system during the simulation.
 
-#Saving Simulation Results
+# Saving Simulation Results
 The simulation results are saved in the simOut.mat file, which can be used for further analysis and comparison with measured responses.
 The related BV configuration and calculated presetting of outer lid are stored in the file BV-info.txts
