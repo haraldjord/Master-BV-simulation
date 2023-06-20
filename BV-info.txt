@@ -5,16 +5,16 @@ useCTDprofile: 1
 useSafetyRig: 0 	 number of safety holders 0
 use fish tag holder: 1
 
-Vehicle presetting of outer lid height from bottom: h_bot = 85.5 [mm]
-Piston position that result in equilibrium water surface 10.72 [mm] 
-	 piston_pos < 10.72 --> floating 
-	 piston_pos > 10.72 --> sinking
-h_bot seems to have an deviation of about 1.5mm (sim 85.50 == real 84.00) BUT THIS NEDS VERIFICATION, AND MIGHT BE CHANGING WITH NEW BATTERY PACKAGE
-rho min vehicle: 1017.85 	 rho max vehicle 1028.52 	 delta rho vehicle: 10.67 
-rho min water:   1020.07 	 rho max water:  1025.97 	 delta rho water: 5.89 
-Warning! minimum water density not at surface. Make sure vehicle are able to float to surface.
+Vehicle presetting of outer lid height from bottom: h_bot = 129.0 [mm]
+Piston position that result in equilibrium water surface 10.50 [mm] 
+	 piston_pos < 10.50 --> floating 
+	 piston_pos > 10.50 --> sinking
+h_bot seems to have an deviation of about 1.5mm (sim 129.00 == real 127.50) BUT THIS NEDS VERIFICATION, AND MIGHT BE CHANGING WITH NEW BATTERY PACKAGE
+rho min vehicle: 1004.87 	 rho max vehicle 1014.49 	 delta rho vehicle: 9.62 
+rho min water:   1006.84 	 rho max water:  1014.89 	 delta rho water: 8.05 
+Vehicle are unable to dive deeper then: 3.3 meter
 
-maximum linear speed of piston: 2.440 [mm/s]
+linear speed of piston: 2.440 [mm/s]
 
 Simulation Parameters:
 Kp = 0.0260 

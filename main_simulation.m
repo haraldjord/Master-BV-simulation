@@ -10,16 +10,16 @@ fprintf(fid, 'BV related information from last simulation\n');
 %%%%%%%%%%% Flags
 flag.searchPresetVolume = true;  % search for preset volume, false use param.h_bot 
 flag.useCTDprofile = true;       % boolean variable, (true/false) idicate wheter ctd profile is available, false use constant density of fresh water. 
-flag.useSafetyRig = false;         % boolean variable, indicate wheter holder for safety line beeing used.
-flag.n_safetyRig = 0;             % number of holder for safety line (1 or 2)
-flag.fishTag = true;               % boolean variable, indicate wheter fish tag holder is monted.
+flag.useSafetyRig = false;        % boolean variable, indicate wheter holder for safety line beeing used.
+flag.n_safetyRig = 0;            % number of holder for safety line (1 or 2)
+flag.fishTag = true;            % boolean variable, indicate wheter fish tag holder is monted.
 fprintf(fid, 'Flags: \nsearchPresetVolume: %d \nuseCTDprofile: %d\n', flag.searchPresetVolume, flag.useCTDprofile);
 fprintf(fid, 'useSafetyRig: %d \t number of safety holders %d\nuse fish tag holder: %d\n\n', flag.useSafetyRig, flag.n_safetyRig, flag.fishTag);
 %%%%%%%%%%
-CTD = load("CTD-probe/borsa14.04.2023.mat"); % load CTD probe measurement (if not available , load "CTD-probe/example_boorsa.mat" to avoid conflict in simulink)
+CTD = load("CTD-probe/borsa15.06.2023.mat"); % load CTD probe measurement (if not available , load "CTD-probe/example_boorsa.mat" to avoid conflict in simulink)
 %CTD = load("CTD-probe/example_borsa.mat");
 depth_CTD = CTD.Depth;
-maxDepth  = 10;
+maxDepth  = 3.2;
 
 
 if flag.useCTDprofile % Load and reduce densityProfile array to 50 meters (target depth)
@@ -78,7 +78,7 @@ delta_pos_positon_min = (1/51200000); % Linear movement per step
 
 %%%% piston parameters
 v_piston_max = 2.44e-3; %%  1e-3; % max linear speed of piston [m/s]
-fprintf(fid, '\nmaximum linear speed of piston: %.3f [mm/s]\n', v_piston_max*1000);
+fprintf(fid, '\nlinear speed of piston: %.3f [mm/s]\n', v_piston_max*1000);
 
 
 %% plot density profile and vehicle density range.
@@ -116,7 +116,7 @@ offsetSensor = 0;
 
 
 % simulation depth and time
-step_depth1 = 5;
+step_depth1 = 1.5;
 step_depth2 = 0;
 stepTime = 120;
 
@@ -127,7 +127,7 @@ fprintf(fid, 'alpha (EMA filter) = %.2f \ntime constant = %.2f [seconds]\n', alp
 %% Run Simulation 
 tspan = [0 60*2]; % Time span for simulation
 %options = simset('MaxStep', 0.5,'MinStep',1e-11, 'AbsTol', 1e-11, 'RelTol', 1e-11);
-%set_param('buoyancy2','AlgebraicLoopSolver','LineSearch');
+%set_param('buoyancy_simulation','AlgebraicLoopSolver','LineSearch');
 out = sim('buoyancy_simulation.slx',tspan);     %,options);
 
 %% Plot Simulation result 
@@ -173,11 +173,12 @@ fig6 = figure(6); % PID term contribution
     hold on 
     plot(out.PIDterms.time, out.PIDterms.signals.values(:,1)*1000);
     plot(out.PIDterms.time, out.PIDterms.signals.values(:,2)*1000);
+    plot(out.PIDterms.time, out.PIDterms.signals.values(:,4)*1000);
     plot(out.PIDterms.time, out.PIDterms.signals.values(:,3)*1000);
     hold off
     grid()
     xlabel('Time[s]'); ylabel("Piston Position [mm]")
-    legend('Kp-term', 'Ki-term', 'Kd-term');
+    legend('Kp-term', 'Ki-term', 'Kd-term', 'PID out');
     
     
 % Close BV-info.txt
